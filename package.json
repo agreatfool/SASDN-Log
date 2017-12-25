@@ -3,8 +3,16 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "author": "",
-  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agreatfool/SASDN-Log.git"
+  },
+  "author": "Jonathan Dai",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/agreatfool/SASDN-Log/issues"
+  },
+  "homepage": "https://github.com/agreatfool/SASDN-Log#readme",
   "dependencies": {
     "debug": "^3.1.0",
     "moment": "^2.19.4"
