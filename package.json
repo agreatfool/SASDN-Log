@@ -1,0 +1,28 @@
+{
+  "name": "sasdn-log",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "deploy": "gulp typescript && gulp protoc-copy",
+    "test": "tsc -p samples && node samples/build/app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "moment": "^2.19.4",
+    "sasdn": "1.1.0"
+  },
+  "devDependencies": {
+    "@types/google-protobuf": "^3.2.5",
+    "@types/node": "^8.0.31",
+    "grpc-tsd": "^1.0.8",
+    "grpc_tools_node_protoc_ts": "^1.0.10",
+    "gulp": "^3.9.1",
+    "gulp-copy": "^1.0.0",
+    "gulp-typescript": "^3.1.7",
+    "merge2": "^1.0.3",
+    "protobufjs": "^6.7.3",
+    "typescript": "^2.3.4"
+  }
+}
