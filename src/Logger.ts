@@ -1,29 +1,27 @@
 import * as moment from 'moment';
-
-export enum LEVEL {
-  FATAL = 1, ERROR, WARN, INFO, DEBUG, TRACE
-}
+import { LEVEL } from './interface/BaseOptions';
+import { LogOptions } from './interface/LogOptions';
 
 /**
  * The ILogger interface methods.
  */
 export interface ILogger {
-  log(message: string, level: LEVEL, options?: any): void;
+  log(message: string, level: LEVEL, options?: LogOptions): void;
 
-  fatal(message: string, options?: any): void;
+  fatal(message: string, options?: LogOptions): void;
 
-  error(message: string, options?: any): void;
+  error(message: string, options?: LogOptions): void;
 
-  warn(message: string, options?: any): void;
+  warn(message: string, options?: LogOptions): void;
 
-  info(message: string, options?: any): void;
+  info(message: string, options?: LogOptions): void;
 
-  debug(message: string, options?: any): void;
+  debug(message: string, options?: LogOptions): void;
 
-  trace(message: string, options?: any): void;
+  trace(message: string, options?: LogOptions): void;
 }
 
-export interface LoggerOptions {
+export interface InitOptions {
   /**
    * Identifier, indicates who sends the log message.
    * The default value is 0.
@@ -35,13 +33,18 @@ export interface LoggerOptions {
    * The default value is 'UnnamedService'.
    */
   loggerName?: string;
+
+  /**
+   * Default LogOptions
+   */
+  logOptions?: LogOptions;
 }
 
 interface LogMessage {
   message: string;
   level: string;
   loggerName: string;
-  options: any;
+  options: LogOptions;
   datetime: string;
 }
 
@@ -50,60 +53,63 @@ interface LogMessage {
  */
 export abstract class Logger implements ILogger {
 
-  private _loggerName: string;
-  private _loggerLevel: number;
+  private _logOptions: LogOptions;
 
-  public constructor(options: LoggerOptions) {
-    this._loggerName = options.loggerName || 'UnnamedService';
-    this._loggerLevel = options.loggerLevel || 0;
+  public constructor(options: LogOptions) {
+    this._logOptions = options || {
+      loggerName: 'UnnamedService',
+      loggerLevel: 0
+    };
   }
 
-  abstract async sendMessage(message: string, options?: any): Promise<boolean>;
+  abstract async sendMessage(message: string, options?: LogOptions): Promise<boolean>;
 
-  public log(message: string, level: LEVEL = LEVEL.INFO, options?: any): void {
-    const logMessage: LogMessage = this._getLogMessage(message, level, options);
-    this.sendMessage(JSON.stringify(logMessage), options).catch(_ => _);
+  public log(message: string, level: LEVEL = LEVEL.INFO, options?: LogOptions): void {
+    const logOption: LogOptions = options ? Object.assign(this._logOptions, options)
+      : (this._logOptions ? this._logOptions : undefined);
+    const logMessage: LogMessage = this._format(message, level, logOption);
+    this.sendMessage(JSON.stringify(logMessage), logOption).catch(_ => _);
     this._printMessage(level, logMessage);
   }
 
-  public fatal(message: string, options?: any): void {
+  public fatal(message: string, options?: LogOptions): void {
     this.log(message, LEVEL.FATAL, options);
   }
 
-  public error(message: string, options?: any): void {
+  public error(message: string, options?: LogOptions): void {
     this.log(message, LEVEL.ERROR, options);
   }
 
-  public warn(message: string, options?: any): void {
+  public warn(message: string, options?: LogOptions): void {
     this.log(message, LEVEL.WARN, options);
   }
 
-  public info(message: string, options?: any): void {
+  public info(message: string, options?: LogOptions): void {
     this.log(message, LEVEL.INFO, options);
   }
 
-  public debug(message: string, options?: any): void {
+  public debug(message: string, options?: LogOptions): void {
     this.log(message, LEVEL.DEBUG, options);
   }
 
-  public trace(message: string, options?: any): void {
+  public trace(message: string, options?: LogOptions): void {
     this.log(message, LEVEL.TRACE, options);
   }
 
-  private _getLogMessage(message: string, level?: LEVEL, options?: any): LogMessage {
+  private _format(message: string, level?: LEVEL, options?: LogOptions): LogMessage {
     const datetime: string = moment().format('YYYY-MM-DD HH:mm:ss.SSS');
     return {
       message,
       level: LEVEL[level],
-      loggerName: this._loggerName,
+      loggerName: this._logOptions.loggerName,
       options,
       datetime
     };
   }
 
   private _printMessage(level: LEVEL, logMessage: LogMessage): void {
-    if (level <= this._loggerLevel) {
-      console.log(`[${logMessage.datetime}] [${this._loggerName}] [${logMessage.level}] ${logMessage.message}`);
+    if (level <= this._logOptions.loggerLevel) {
+      console.log(`[${logMessage.datetime}] [${this._logOptions.loggerName}] [${logMessage.level}] ${logMessage.message}`);
     }
   }
 

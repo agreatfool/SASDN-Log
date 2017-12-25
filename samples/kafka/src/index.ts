@@ -1,7 +1,7 @@
 import * as util from 'util';
 import { SendRequest, SendResponse } from './proto/kafkaqueue/kafkaqueue_pb';
 import MSClientKafkaQueue from './clients/kafkaqueue/MSClientKafkaQueue';
-import { LEVEL, Logger } from '../../../index';
+import { LEVEL, Logger, KafkaOptions } from '../../../index';
 
 const setTimeoutAsync = util.promisify(setTimeout);
 
@@ -12,11 +12,11 @@ export enum TOPIC {
 }
 
 class KafkaLogger extends Logger {
-  async sendMessage(message: string, options?: any): Promise<boolean> {
-    const client = new MSClientKafkaQueue('127.0.0.1:9090');
+  async sendMessage(message: string, options?: KafkaOptions): Promise<boolean> {
+    const client = new MSClientKafkaQueue(`${options.kafkaHost}:${options.kafkaPort}`);
     const request = new SendRequest();
     let response: SendResponse;
-    request.setTopic(options.topic || TOPIC.BUSINESS);
+    request.setTopic(options.kafkaTopic || TOPIC.BUSINESS);
     request.setMessagesList([message]);
     try {
       response = await client.send(request);
@@ -29,8 +29,11 @@ class KafkaLogger extends Logger {
 }
 
 const logger: KafkaLogger = new KafkaLogger({
+  kafkaHost: '127.0.0.1',
+  kafkaPort: 9090,
+  kafkaTopic: TOPIC.BUSINESS,
   loggerName: 'test',
-  loggerLevel: LEVEL.INFO
+  loggerLevel: LEVEL.INFO,
 });
 
 async function testLogs(): Promise<any> {
@@ -45,7 +48,7 @@ async function testLogs(): Promise<any> {
   */
 
   for (let i = 1; i <= 5; i++) {
-    logger.info(`This is a system message: #${Date.now()}`, { topic: TOPIC.SYSTEM });
+    logger.info(`This is a system message: #${Date.now()}`, { kafkaTopic: TOPIC.SYSTEM });
     await setTimeoutAsync(2000);
   }
 

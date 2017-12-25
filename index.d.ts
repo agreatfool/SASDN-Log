@@ -6,19 +6,48 @@ export declare enum LEVEL {
   DEBUG = 5,
   TRACE = 6,
 }
-/**
- * The ILogger interface methods.
- */
-export interface ILogger {
-  log(message: string, level: LEVEL, options?: any): void;
-  fatal(message: string, options?: any): void;
-  error(message: string, options?: any): void;
-  warn(message: string, options?: any): void;
-  info(message: string, options?: any): void;
-  debug(message: string, options?: any): void;
-  trace(message: string, options?: any): void;
+
+export interface BaseOptions {
+  loggerName?: string;
+  loggerLevel?: LEVEL;
 }
-export interface LoggerOptions {
+
+export interface KafkaOptions extends BaseOptions {
+  kafkaHost?: string;
+  kafkaPort?: number;
+  kafkaTopic?: string;
+}
+
+export declare enum TRANSPORT {
+  TCP = 1,
+  UDP = 2,
+}
+
+export interface SyslogOptions extends BaseOptions {
+  syslogHost?: string;
+  syslogPort?: number;
+  transport?: TRANSPORT;
+}
+
+export declare type LogOptions = BaseOptions | KafkaOptions | SyslogOptions;
+
+export interface ILogger {
+  log(message: string, level: LEVEL, options?: LogOptions): void;
+
+  fatal(message: string, options?: LogOptions): void;
+
+  error(message: string, options?: LogOptions): void;
+
+  warn(message: string, options?: LogOptions): void;
+
+  info(message: string, options?: LogOptions): void;
+
+  debug(message: string, options?: LogOptions): void;
+
+  trace(message: string, options?: LogOptions): void;
+}
+
+export interface InitOptions {
   /**
    * Identifier, indicates who sends the log message.
    * The default value is 0.
@@ -30,22 +59,37 @@ export interface LoggerOptions {
    * The default value is 'UnnamedService'.
    */
   loggerName?: string;
+  /**
+   * Default LogOptions
+   */
+  logOptions?: LogOptions;
 }
+
 /**
  * The ILogger implemention.
  */
 export declare abstract class Logger implements ILogger {
-  private _loggerName;
-  private _loggerLevel;
-  constructor(options: LoggerOptions);
-  abstract sendMessage(message: string, options?: any): Promise<boolean>;
-  log(message: string, level?: LEVEL, options?: any): void;
-  fatal(message: string, options?: any): void;
-  error(message: string, options?: any): void;
-  warn(message: string, options?: any): void;
-  info(message: string, options?: any): void;
-  debug(message: string, options?: any): void;
-  trace(message: string, options?: any): void;
-  private _getLogMessage(message, level?, options?);
+  private _logOptions;
+
+  constructor(options: LogOptions);
+
+  abstract sendMessage(message: string, options?: LogOptions): Promise<boolean>;
+
+  log(message: string, level?: LEVEL, options?: LogOptions): void;
+
+  fatal(message: string, options?: LogOptions): void;
+
+  error(message: string, options?: LogOptions): void;
+
+  warn(message: string, options?: LogOptions): void;
+
+  info(message: string, options?: LogOptions): void;
+
+  debug(message: string, options?: LogOptions): void;
+
+  trace(message: string, options?: LogOptions): void;
+
+  private _format(message, level?, options?);
+
   private _printMessage(level, logMessage);
 }

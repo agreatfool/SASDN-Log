@@ -22,10 +22,10 @@ var TOPIC;
 class KafkaLogger extends index_1.Logger {
     sendMessage(message, options) {
         return __awaiter(this, void 0, void 0, function* () {
-            const client = new MSClientKafkaQueue_1.default('127.0.0.1:9090');
+            const client = new MSClientKafkaQueue_1.default(`${options.kafkaHost}:${options.kafkaPort}`);
             const request = new kafkaqueue_pb_1.SendRequest();
             let response;
-            request.setTopic(options.topic || TOPIC.BUSINESS);
+            request.setTopic(options.kafkaTopic || TOPIC.BUSINESS);
             request.setMessagesList([message]);
             try {
                 response = yield client.send(request);
@@ -38,8 +38,11 @@ class KafkaLogger extends index_1.Logger {
     }
 }
 const logger = new KafkaLogger({
+    kafkaHost: '127.0.0.1',
+    kafkaPort: 9090,
+    kafkaTopic: TOPIC.BUSINESS,
     loggerName: 'test',
-    loggerLevel: index_1.LEVEL.INFO
+    loggerLevel: index_1.LEVEL.INFO,
 });
 function testLogs() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -53,7 +56,7 @@ function testLogs() {
         logger.error('This is a error message');
         */
         for (let i = 1; i <= 5; i++) {
-            logger.info(`This is a system message: #${Date.now()}`, { topic: TOPIC.SYSTEM });
+            logger.info(`This is a system message: #${Date.now()}`, { kafkaTopic: TOPIC.SYSTEM });
             yield setTimeoutAsync(2000);
         }
         for (let i = 1; i <= 5; i++) {
