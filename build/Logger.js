@@ -2,6 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const moment = require("moment");
 const BaseOptions_1 = require("./interface/BaseOptions");
+const debug = require("debug");
+debug.enable('SASDN:*');
 /**
  * The ILogger implemention.
  */
@@ -49,7 +51,8 @@ class Logger {
     }
     _printMessage(level, logMessage) {
         if (level <= this._logOptions.loggerLevel) {
-            console.log(`[${logMessage.datetime}] [${this._logOptions.loggerName}] [${logMessage.level}] ${logMessage.message}`);
+            const log = debug(`SASDN:${this._logOptions.loggerName}`);
+            log(`[${logMessage.datetime}] [${logMessage.level}] ${logMessage.message}`);
         }
     }
 }

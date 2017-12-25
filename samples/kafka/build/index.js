@@ -56,11 +56,11 @@ function testLogs() {
         logger.error('This is a error message');
         */
         for (let i = 1; i <= 5; i++) {
-            logger.info(`This is a system message: #${Date.now()}`, { kafkaTopic: TOPIC.SYSTEM });
+            logger.log(`This is a system message: #${Date.now()}`, i, { kafkaTopic: TOPIC.SYSTEM });
             yield setTimeoutAsync(2000);
         }
         for (let i = 1; i <= 5; i++) {
-            logger.info(`This is a business message: #${Date.now()}`);
+            logger.log(`This is a business message: #${Date.now()}`, i);
             yield setTimeoutAsync(2000);
         }
     });

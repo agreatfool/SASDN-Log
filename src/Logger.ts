@@ -1,6 +1,9 @@
 import * as moment from 'moment';
 import { LEVEL } from './interface/BaseOptions';
 import { LogOptions } from './interface/LogOptions';
+import debug = require('debug');
+
+debug.enable('SASDN:*');
 
 /**
  * The ILogger interface methods.
@@ -19,25 +22,6 @@ export interface ILogger {
   debug(message: string, options?: LogOptions): void;
 
   trace(message: string, options?: LogOptions): void;
-}
-
-export interface InitOptions {
-  /**
-   * Identifier, indicates who sends the log message.
-   * The default value is 0.
-   */
-  loggerLevel?: number;
-  /**
-   * Used for debugging, if the log message's level less than or equal to `loggerLevel',
-   * it will also be sent to the console.
-   * The default value is 'UnnamedService'.
-   */
-  loggerName?: string;
-
-  /**
-   * Default LogOptions
-   */
-  logOptions?: LogOptions;
 }
 
 interface LogMessage {
@@ -109,7 +93,8 @@ export abstract class Logger implements ILogger {
 
   private _printMessage(level: LEVEL, logMessage: LogMessage): void {
     if (level <= this._logOptions.loggerLevel) {
-      console.log(`[${logMessage.datetime}] [${this._logOptions.loggerName}] [${logMessage.level}] ${logMessage.message}`);
+      const log:debug.IDebugger = debug(`SASDN:${this._logOptions.loggerName}`);
+      log(`[${logMessage.datetime}] [${logMessage.level}] ${logMessage.message}`);
     }
   }
 

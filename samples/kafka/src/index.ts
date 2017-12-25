@@ -48,12 +48,12 @@ async function testLogs(): Promise<any> {
   */
 
   for (let i = 1; i <= 5; i++) {
-    logger.info(`This is a system message: #${Date.now()}`, { kafkaTopic: TOPIC.SYSTEM });
+    logger.log(`This is a system message: #${Date.now()}`, i, { kafkaTopic: TOPIC.SYSTEM });
     await setTimeoutAsync(2000);
   }
 
   for (let i = 1; i <= 5; i++) {
-    logger.info(`This is a business message: #${Date.now()}`);
+    logger.log(`This is a business message: #${Date.now()}`, i);
     await setTimeoutAsync(2000);
   }
 }

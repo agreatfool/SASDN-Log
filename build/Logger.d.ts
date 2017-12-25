@@ -12,23 +12,6 @@ export interface ILogger {
     debug(message: string, options?: LogOptions): void;
     trace(message: string, options?: LogOptions): void;
 }
-export interface InitOptions {
-    /**
-     * Identifier, indicates who sends the log message.
-     * The default value is 0.
-     */
-    loggerLevel?: number;
-    /**
-     * Used for debugging, if the log message's level less than or equal to `loggerLevel',
-     * it will also be sent to the console.
-     * The default value is 'UnnamedService'.
-     */
-    loggerName?: string;
-    /**
-     * Default LogOptions
-     */
-    logOptions?: LogOptions;
-}
 /**
  * The ILogger implemention.
  */
