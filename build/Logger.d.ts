@@ -18,7 +18,7 @@ export interface ILogger {
 export declare abstract class Logger implements ILogger {
     private _logOptions;
     constructor(options: LogOptions);
-    abstract sendMessage(message: string, options?: LogOptions): Promise<boolean>;
+    abstract sendMessage(message: string, level: LEVEL, options?: LogOptions): Promise<boolean>;
     log(message: string, level?: LEVEL, options?: LogOptions): void;
     fatal(message: string, options?: LogOptions): void;
     error(message: string, options?: LogOptions): void;

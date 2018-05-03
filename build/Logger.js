@@ -18,7 +18,7 @@ class Logger {
         const logOption = options ? Object.assign(this._logOptions, options)
             : (this._logOptions ? this._logOptions : undefined);
         const logMessage = this._format(message, level, logOption);
-        this.sendMessage(JSON.stringify(logMessage), logOption).catch(_ => _);
+        this.sendMessage(JSON.stringify(logMessage), level, logOption).catch(_ => _);
         this._printMessage(level, logMessage);
     }
     fatal(message, options) {
