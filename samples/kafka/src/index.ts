@@ -12,7 +12,7 @@ export enum TOPIC {
 }
 
 class KafkaLogger extends Logger {
-  async sendMessage(message: string, options?: KafkaOptions): Promise<boolean> {
+  async sendMessage(message: string, level: LEVEL, options?: KafkaOptions): Promise<boolean> {
     const client = new MSClientKafkaQueue(`${options.kafkaHost}:${options.kafkaPort}`);
     const request = new SendRequest();
     let response: SendResponse;

@@ -20,7 +20,7 @@ var TOPIC;
     TOPIC["DATACENTER"] = "DataCenterTopic";
 })(TOPIC = exports.TOPIC || (exports.TOPIC = {}));
 class KafkaLogger extends index_1.Logger {
-    sendMessage(message, options) {
+    sendMessage(message, level, options) {
         return __awaiter(this, void 0, void 0, function* () {
             const client = new MSClientKafkaQueue_1.default(`${options.kafkaHost}:${options.kafkaPort}`);
             const request = new kafkaqueue_pb_1.SendRequest();

@@ -46,13 +46,13 @@ export abstract class Logger implements ILogger {
     };
   }
 
-  abstract async sendMessage(message: string, options?: LogOptions): Promise<boolean>;
+  abstract async sendMessage(message: string, level: LEVEL, options?: LogOptions): Promise<boolean>;
 
   public log(message: string, level: LEVEL = LEVEL.INFO, options?: LogOptions): void {
     const logOption: LogOptions = options ? Object.assign(this._logOptions, options)
       : (this._logOptions ? this._logOptions : undefined);
     const logMessage: LogMessage = this._format(message, level, logOption);
-    this.sendMessage(JSON.stringify(logMessage), logOption).catch(_ => _);
+    this.sendMessage(JSON.stringify(logMessage), level, logOption).catch(_ => _);
     this._printMessage(level, logMessage);
   }
 
